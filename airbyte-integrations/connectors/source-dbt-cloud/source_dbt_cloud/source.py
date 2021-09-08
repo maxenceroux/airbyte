@@ -53,26 +53,6 @@ There are additional required TODOs in the files within the integration_tests fo
 class DbtCloudStream(HttpStream, ABC):
     """
     This class represents a stream output by the connector.
-    This is an abstract base class meant to contain all the common functionality at the API level e.g: the API base URL, pagination strategy,
-    parsing responses etc..
-
-    Each stream should extend this class (or another abstract subclass of it) to specify behavior unique to that stream.
-
-    Typically for REST APIs each stream corresponds to a resource in the API. For example if the API
-    contains the endpoints
-        - GET v1/customers
-        - GET v1/employees
-
-    then you should have three classes:
-    `class DbtCloudStream(HttpStream, ABC)` which is the current class
-    `class Customers(DbtCloudStream)` contains behavior to pull data for customers using v1/customers
-    `class Employees(DbtCloudStream)` contains behavior to pull data for employees using v1/employees
-
-    If some streams implement incremental sync, it is typical to create another class
-    `class IncrementalDbtCloudStream((DbtCloudStream), ABC)` then have concrete stream implementations extend it. An example
-    is provided below.
-
-    See the reference docs for the full list of configurable options.
     """
 
     url_base = "https://cloud.getdbt.com/api/v2/"
@@ -80,23 +60,85 @@ class DbtCloudStream(HttpStream, ABC):
     primary_key = None
 
     def next_page_token(
-        self, response: requests.Response
+        self, response: requests.Response, stream_batch_count: int
     ) -> Optional[Mapping[str, Any]]:
         """
-        TODO: Override this method to define a pagination strategy. If you will not be using pagination, no action is required - just return None.
-
-        This method should return a Mapping (e.g: dict) containing whatever information required to make paginated requests. This dict is passed
-        to most other methods in this class to help you form headers, request bodies, query params, etc..
-
-        For example, if the API accepts a 'page' parameter to determine which page of the result to return, and a response from the API contains a
-        'page' number, then this method should probably return a dict {'page': response.json()['page'] + 1} to increment the page count by 1.
-        The request_params method should then read the input next_page_token and set the 'page' param to next_page_token['page'].
-
-        :param response: the most recent response from the API
-        :return If there is another page in the result, a mapping (e.g: dict) containing information needed to query the next page in the response.
-                If there are no more pages in the result, return None.
+        In each response given by the dbt cloud API, we're able to retrieve total number of occurences for the requested object and the number of occurences returned in this batch.
+        "pagination": {
+            "count": 10,
+            "total_count": 2012
+        }
+        Our strategy here is to sum up all batches count and enter exit condition if the sum of all batches count is equal or greater (shouldn't happen)
+        than total count as received from API response.
         """
-        return None
+        batch_count = response.json().get("extra").get("pagination").get("count")
+        total_count = response.json().get("extra").get("pagination").get("total_count")
+        if stream_batch_count + batch_count >= total_count:
+            return None
+        return stream_batch_count + batch_count
+
+    def read_records(
+        self,
+        sync_mode: SyncMode,
+        cursor_field: List[str] = None,
+        stream_slice: Mapping[str, Any] = None,
+        stream_state: Mapping[str, Any] = None,
+    ) -> Iterable[Mapping[str, Any]]:
+        """
+        Same technique as base HttpStream but we should now pass the sum of all batches records count to next_page_token method
+        """
+        stream_state = stream_state or {}
+        pagination_complete = False
+
+        next_page_token = None
+        stream_batch_count = 0
+        while not pagination_complete:
+            request_headers = self.request_headers(
+                stream_state=stream_state,
+                stream_slice=stream_slice,
+                next_page_token=next_page_token,
+            )
+            request = self._create_prepared_request(
+                path=self.path(
+                    stream_state=stream_state,
+                    stream_slice=stream_slice,
+                    next_page_token=next_page_token,
+                ),
+                headers=dict(request_headers, **self.authenticator.get_auth_header()),
+                params=self.request_params(
+                    stream_state=stream_state,
+                    stream_slice=stream_slice,
+                    next_page_token=next_page_token,
+                ),
+                json=self.request_body_json(
+                    stream_state=stream_state,
+                    stream_slice=stream_slice,
+                    next_page_token=next_page_token,
+                ),
+                data=self.request_body_data(
+                    stream_state=stream_state,
+                    stream_slice=stream_slice,
+                    next_page_token=next_page_token,
+                ),
+            )
+            request_kwargs = self.request_kwargs(
+                stream_state=stream_state,
+                stream_slice=stream_slice,
+                next_page_token=next_page_token,
+            )
+            response = self._send_request(request, request_kwargs)
+            yield from self.parse_response(
+                response, stream_state=stream_state, stream_slice=stream_slice
+            )
+
+            next_page_token = self.next_page_token(response, stream_batch_count)
+            if next_page_token:
+                stream_batch_count = next_page_token
+            else:
+                pagination_complete = True
+
+        # Always return an empty generator just in case no records were ever yielded
+        yield from []
 
     def parse_response(
         self, response: requests.Response, **kwargs
@@ -111,7 +153,7 @@ class DbtCloudStream(HttpStream, ABC):
 
 class Accounts(DbtCloudStream):
     """
-    TODO: Change class name to match the table/data source this stream corresponds to.
+    Accounts LIST endpoint on dbt Cloud V2 API
     """
 
     # TODO: Fill in the primary key. Required. This is usually a unique field in the stream, like an ID or a timestamp.
@@ -128,7 +170,7 @@ class Accounts(DbtCloudStream):
 
 class DbtCloudDependentStream(DbtCloudStream):
     """
-    TODO: Change class name to match the table/data source this stream corresponds to.
+    We need to get all most dbt endpoints, ids of parent items in order to create URL.
     """
 
     # TODO: Fill in the primary key. Required. This is usually a unique field in the stream, like an ID or a timestamp.
@@ -140,20 +182,23 @@ class DbtCloudDependentStream(DbtCloudStream):
         stream_slice: Mapping[str, Any] = None,
         stream_state: Mapping[str, Any] = None,
     ) -> Iterable[Mapping[str, Any]]:
+        """
+        We use a for loop to read records from all paths.
+        """
         stream_state = stream_state or {}
         pagination_complete = False
 
-        next_page_token = None
+        stream_batch_count = 0
         while not pagination_complete:
             request_headers = self.request_headers(
                 stream_state=stream_state,
                 stream_slice=stream_slice,
-                next_page_token=next_page_token,
+                next_page_token=stream_batch_count,
             )
             for my_path in self.path(
                 stream_state=stream_state,
                 stream_slice=stream_slice,
-                next_page_token=next_page_token,
+                next_page_token=stream_batch_count,
             ):
                 request = self._create_prepared_request(
                     path=my_path,
@@ -163,26 +208,28 @@ class DbtCloudDependentStream(DbtCloudStream):
                     params=self.request_params(
                         stream_state=stream_state,
                         stream_slice=stream_slice,
-                        next_page_token=next_page_token,
+                        next_page_token=stream_batch_count,
                     ),
                     json=self.request_body_json(
                         stream_state=stream_state,
                         stream_slice=stream_slice,
-                        next_page_token=next_page_token,
+                        next_page_token=stream_batch_count,
                     ),
                 )
                 request_kwargs = self.request_kwargs(
                     stream_state=stream_state,
                     stream_slice=stream_slice,
-                    next_page_token=next_page_token,
+                    next_page_token=stream_batch_count,
                 )
                 response = self._send_request(request, request_kwargs)
                 yield from self.parse_response(
                     response, stream_state=stream_state, stream_slice=stream_slice
                 )
 
-            next_page_token = self.next_page_token(response)
-            if not next_page_token:
+            next_page_token = self.next_page_token(response, stream_batch_count)
+            if next_page_token:
+                stream_batch_count = next_page_token
+            else:
                 pagination_complete = True
 
         # Always return an empty generator just in case no records were ever yielded
@@ -191,10 +238,8 @@ class DbtCloudDependentStream(DbtCloudStream):
 
 class Projects(DbtCloudDependentStream):
     """
-    TODO: Change class name to match the table/data source this stream corresponds to.
+    Project LIST endpoint on dbt Cloud V2 API
     """
-
-    # TODO: Fill in the primary key. Required. This is usually a unique field in the stream, like an ID or a timestamp.
 
     primary_key = "id"
 
@@ -204,6 +249,9 @@ class Projects(DbtCloudDependentStream):
         stream_slice: Mapping[str, Any] = None,
         next_page_token: Mapping[str, Any] = None,
     ) -> str:
+        """
+        Get ids from Accounts stream to yield paths using parent account ids.
+        """
         accounts_stream = Accounts(authenticator=self.authenticator)
         for account_rec in accounts_stream.read_records(
             sync_mode=SyncMode.full_refresh
@@ -214,7 +262,7 @@ class Projects(DbtCloudDependentStream):
 
 class Jobs(DbtCloudDependentStream):
     """
-    TODO: Change class name to match the table/data source this stream corresponds to.
+    Jobs LIST endpoint on dbt Cloud V2 API
     """
 
     # TODO: Fill in the primary key. Required. This is usually a unique field in the stream, like an ID or a timestamp.
@@ -237,90 +285,12 @@ class Jobs(DbtCloudDependentStream):
 
 class Runs(DbtCloudDependentStream):
     """
-    TODO: Change class name to match the table/data source this stream corresponds to.
+    Runs LIST endpoint on dbt Cloud V2 API
     """
 
     # TODO: Fill in the primary key. Required. This is usually a unique field in the stream, like an ID or a timestamp.
 
     primary_key = "id"
-
-    def next_page_token(
-        self, response: requests.Response, offset: int
-    ) -> Optional[Mapping[str, Any]]:
-        """
-        TODO: Override this method to define a pagination strategy. If you will not be using pagination, no action is required - just return None.
-
-        This method should return a Mapping (e.g: dict) containing whatever information required to make paginated requests. This dict is passed
-        to most other methods in this class to help you form headers, request bodies, query params, etc..
-
-        For example, if the API accepts a 'page' parameter to determine which page of the result to return, and a response from the API contains a
-        'page' number, then this method should probably return a dict {'page': response.json()['page'] + 1} to increment the page count by 1.
-        The request_params method should then read the input next_page_token and set the 'page' param to next_page_token['page'].
-
-        :param response: the most recent response from the API
-        :return If there is another page in the result, a mapping (e.g: dict) containing information needed to query the next page in the response.
-                If there are no more pages in the result, return None.
-        """
-        if len(response.json().get("data")) > 0:
-            return {"offset": offset + 100}
-        return None
-
-    def read_records(
-        self,
-        sync_mode: SyncMode,
-        cursor_field: List[str] = None,
-        stream_slice: Mapping[str, Any] = None,
-        stream_state: Mapping[str, Any] = None,
-    ) -> Iterable[Mapping[str, Any]]:
-        stream_state = stream_state or {}
-        pagination_complete = False
-
-        offset = 0
-        next_page_token = {"offset": offset}
-        while not pagination_complete:
-            request_headers = self.request_headers(
-                stream_state=stream_state,
-                stream_slice=stream_slice,
-                next_page_token=next_page_token,
-            )
-            for my_path in self.path(
-                stream_state=stream_state,
-                stream_slice=stream_slice,
-                next_page_token=next_page_token,
-            ):
-                request = self._create_prepared_request(
-                    path=my_path,
-                    headers=dict(
-                        request_headers, **self.authenticator.get_auth_header()
-                    ),
-                    params=self.request_params(
-                        stream_state=stream_state,
-                        stream_slice=stream_slice,
-                        next_page_token=next_page_token,
-                    ),
-                    json=self.request_body_json(
-                        stream_state=stream_state,
-                        stream_slice=stream_slice,
-                        next_page_token=next_page_token,
-                    ),
-                )
-                request_kwargs = self.request_kwargs(
-                    stream_state=stream_state,
-                    stream_slice=stream_slice,
-                    next_page_token=next_page_token,
-                )
-                response = self._send_request(request, request_kwargs)
-                yield from self.parse_response(
-                    response, stream_state=stream_state, stream_slice=stream_slice
-                )
-
-            next_page_token = self.next_page_token(response, offset)
-            offset += 1
-            if not next_page_token:
-                pagination_complete = True
-
-        # Always return an empty generator just in case no records were ever yielded
-        yield from []
 
     def path(
         self,
@@ -341,15 +311,11 @@ class Runs(DbtCloudDependentStream):
         stream_slice: Mapping[str, Any] = None,
         next_page_token: Mapping[str, Any] = None,
     ) -> MutableMapping[str, Any]:
-        """
-        Override this method to define the query parameters that should be set on an outgoing HTTP request given the inputs.
-
-        E.g: you might want to define query parameters for paging if next_page_token is not None.
-        """
 
         return {
             "include_related": ["trigger", "job", "repository", "environment"],
-            "offset": next_page_token.get("offset"),
+            "offset": next_page_token,
+            "limit": 1000,
         }
 
 
