@@ -1,0 +1,72 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "account_id": {
+            "type": [
+                "null",
+                "integer"
+            ]
+        },
+        "project_id": {
+            "type": [
+                "null",
+                "integer"
+            ]
+        },
+        "environment_id": {
+            "type": [
+                "null",
+                "integer"
+            ]
+        },
+        "name": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "execute_Steps": {
+            "type": [
+                "null",
+                "array"
+            ]
+        },
+        "dbt_version": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "triggers": {
+            "type": [
+                "null",
+                "object"
+            ]
+        },
+        "settings": {
+            "type": [
+                "null",
+                "object"
+            ]
+        },
+        "state": {
+            "type": [
+                "null",
+                "integer"
+            ]
+        },
+        "generate_docs": {
+            "type": [
+                "null",
+                "boolean"
+            ]
+        },
+        "schedule": {
+            "type": [
+                "null",
+                "object"
+            ]
+        }
+    }
+}

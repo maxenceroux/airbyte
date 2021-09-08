@@ -1,0 +1,457 @@
+{
+    "streams": [
+        {
+            "stream": {
+                "name": "accounts",
+                "json_schema": {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "name": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "plan": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "pending_cancel": {
+                            "type": [
+                                "null",
+                                "boolean"
+                            ]
+                        },
+                        "state": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "developper_seats": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "read_only_seats": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "run_slots": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "created_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "updated_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        }
+                    }
+                },
+                "supported_sync_modes": [
+                    "full_refresh"
+                ]
+            },
+            "sync_mode": "full_refresh",
+            "destination_sync_mode": "overwrite"
+        },
+        {
+            "stream": {
+                "name": "projects",
+                "json_schema": {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "account_id": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "connection": {
+                            "type": [
+                                "null",
+                                "object"
+                            ]
+                        },
+                        "connection_id": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "dbt_project_subdirectory": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "name": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "repository": {
+                            "type": [
+                                "null",
+                                "object"
+                            ]
+                        },
+                        "repository_id": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "state": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "updated_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "created_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        }
+                    }
+                },
+                "supported_sync_modes": [
+                    "full_refresh"
+                ]
+            },
+            "sync_mode": "full_refresh",
+            "destination_sync_mode": "overwrite"
+        },
+        {
+            "stream": {
+                "name": "jobs",
+                "json_schema": {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "type": "object",
+                    "properties": {
+                        "account_id": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "project_id": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "environment_id": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "name": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "execute_Steps": {
+                            "type": [
+                                "null",
+                                "array"
+                            ]
+                        },
+                        "dbt_version": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "triggers": {
+                            "type": [
+                                "null",
+                                "object"
+                            ]
+                        },
+                        "settings": {
+                            "type": [
+                                "null",
+                                "object"
+                            ]
+                        },
+                        "state": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "generate_docs": {
+                            "type": [
+                                "null",
+                                "boolean"
+                            ]
+                        },
+                        "schedule": {
+                            "type": [
+                                "null",
+                                "object"
+                            ]
+                        }
+                    }
+                },
+                "supported_sync_modes": [
+                    "full_refresh"
+                ]
+            },
+            "sync_mode": "full_refresh",
+            "destination_sync_mode": "overwrite"
+        },
+        {
+            "stream": {
+                "name": "runs",
+                "json_schema": {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "trigger_id": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "account_id": {
+                            "type": [
+                                "null",
+                                "object"
+                            ]
+                        },
+                        "project_id": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "job_definition_id": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "status": {
+                            "type": [
+                                "null",
+                                "integer"
+                            ]
+                        },
+                        "git_branch": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "git_sha": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "status_message": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "dbt_version": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "created_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "updated_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "dequed_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "started_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "finished_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "last_checked_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "last_heartbeat_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "owner_thread_id": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "executed_by_thread_id": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "artifacts_saved": {
+                            "type": [
+                                "null",
+                                "boolean"
+                            ]
+                        },
+                        "artifacts_s3_path": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "trigger": {
+                            "type": [
+                                "null",
+                                "object"
+                            ]
+                        },
+                        "job": {
+                            "type": [
+                                "null",
+                                "object"
+                            ]
+                        },
+                        "duration": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "queued_duration": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "run_duration": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "duration_humanized": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "queued_duration_humanized": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "run_duration_humanized": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "status_humanized": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "created_at_humanized": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        }
+                    }
+                },
+                "supported_sync_modes": [
+                    "full_refresh"
+                ]
+            },
+            "sync_mode": "full_refresh",
+            "destination_sync_mode": "overwrite"
+        }
+    ]
+}

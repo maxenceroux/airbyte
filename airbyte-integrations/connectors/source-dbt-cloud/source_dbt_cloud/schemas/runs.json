@@ -1,0 +1,199 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": [
+                "null",
+                "integer"
+            ]
+        },
+        "trigger_id": {
+            "type": [
+                "null",
+                "integer"
+            ]
+        },
+        "account_id": {
+            "type": [
+                "null",
+                "object"
+            ]
+        },
+        "project_id": {
+            "type": [
+                "null",
+                "integer"
+            ]
+        },
+        "job_definition_id": {
+            "type": [
+                "null",
+                "integer"
+            ]
+        },
+        "status": {
+            "type": [
+                "null",
+                "integer"
+            ]
+        },
+        "git_branch": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "git_sha": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "status_message": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "dbt_version": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "created_at": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "updated_at": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "dequed_at": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "started_at": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "finished_at": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "last_checked_at": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "last_heartbeat_at": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date-time"
+        },
+        "owner_thread_id": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "executed_by_thread_id": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "artifacts_saved": {
+            "type": [
+                "null",
+                "boolean"
+            ]
+        },
+        "artifacts_s3_path": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "trigger": {
+            "type": [
+                "null",
+                "object"
+            ]
+        },
+        "job": {
+            "type": [
+                "null",
+                "object"
+            ]
+        },
+        "duration": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "queued_duration": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "run_duration": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "duration_humanized": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "queued_duration_humanized": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "run_duration_humanized": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "status_humanized": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "created_at_humanized": {
+            "type": [
+                "null",
+                "string"
+            ]
+        }
+    }
+}

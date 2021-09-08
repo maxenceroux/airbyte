@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "name": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "plan": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "pending_cancel": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "state": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "developper_seats": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "read_only_seats": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "run_slots": {
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "created_at": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    }
+  }
+}
