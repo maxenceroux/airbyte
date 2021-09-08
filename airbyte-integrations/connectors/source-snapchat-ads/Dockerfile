@@ -4,14 +4,13 @@ FROM python:3.7-slim
 RUN apt-get update && apt-get install -y bash && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /airbyte/integration_code
-COPY source_snapchat_marketing ./source_snapchat_marketing
+COPY source_snapchat_ads ./source_snapchat_ads
 COPY main.py ./
 COPY setup.py ./
-RUN pip install . && pip install pytz
-
+RUN pip install .
 
 ENV AIRBYTE_ENTRYPOINT "python /airbyte/integration_code/main.py"
 ENTRYPOINT ["python", "/airbyte/integration_code/main.py"]
 
-LABEL io.airbyte.version=0.1.1
-LABEL io.airbyte.name=airbyte/source-snapchat-marketing
+LABEL io.airbyte.version=0.1.0
+LABEL io.airbyte.name=airbyte/source-snapchat-ads

@@ -1,0 +1,33 @@
+{
+  "documentationUrl": "https://marketingapi.snapchat.com/docs/",
+  "connectionSpecification": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Snapchat Ads Spec",
+    "type": "object",
+    "required": [
+      "access_token",
+      "refresh_token",
+      "client_id",
+      "client_secret"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "access_token": {
+        "type": "string",
+        "description": "Access token as retrieved from Authorization workflow"
+      },
+      "refresh_token": {
+        "type": "string",
+        "description": "Refresh token as retrieved from Authorization workflow"
+      },
+      "client_id": {
+        "type": "string",
+        "description": "Snapchat App Client ID"
+      },
+      "client_secret": {
+        "type": "string",
+        "description": "Snapchat App Client secret"
+      }
+    }
+  }
+}

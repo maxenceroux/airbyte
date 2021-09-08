@@ -24,11 +24,16 @@
 
 
 from abc import ABC
+import datetime
+import json
+import pytz
 from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple
 from urllib.parse import parse_qsl, urlparse
 
 import pendulum
 import requests
+import copy
+from datetime import date, time, timedelta, datetime
 from airbyte_cdk.models import SyncMode
 from airbyte_cdk.sources import AbstractSource
 from airbyte_cdk.sources.streams import Stream
@@ -60,7 +65,9 @@ class SnapchatMarketingException(Exception):
     """ Just for formatting the exception as SnapchatMarketing"""
 
 
-def get_depend_on_ids(depends_on_stream, depends_on_stream_config: Mapping, slice_key_name: str) -> List:
+def get_depend_on_ids(
+    depends_on_stream, depends_on_stream_config: Mapping, slice_key_name: str
+) -> List:
     """This auxiliary function is to help retrieving the ids from another stream
 
     :param depends_on_stream: The stream class from what we need to retrieve ids
@@ -114,15 +121,24 @@ def get_depend_on_ids(depends_on_stream, depends_on_stream_config: Mapping, slic
     # and are used in the path function as a path variables according to the API docs
 
     depend_on_stream = depends_on_stream(**depends_on_stream_config)
-    depend_on_stream_slices = depend_on_stream.stream_slices(sync_mode=SyncMode.full_refresh)
+    depend_on_stream_slices = depend_on_stream.stream_slices(
+        sync_mode=SyncMode.full_refresh
+    )
     depend_on_stream_ids = []
 
     if depend_on_stream_slices != default_stream_slices_return_value:
         for depend_on_stream_slice in depend_on_stream_slices:
-            records = depend_on_stream.read_records(sync_mode=SyncMode.full_refresh, stream_slice=depend_on_stream_slice)
-            depend_on_stream_ids += [{slice_key_name: record["id"]} for record in records]
+            records = depend_on_stream.read_records(
+                sync_mode=SyncMode.full_refresh, stream_slice=depend_on_stream_slice
+            )
+            depend_on_stream_ids += [
+                {slice_key_name: record["id"]} for record in records
+            ]
     else:
-        depend_on_stream_ids = [{slice_key_name: record["id"]} for record in depend_on_stream.read_records(sync_mode=SyncMode.full_refresh)]
+        depend_on_stream_ids = [
+            {slice_key_name: record["id"]}
+            for record in depend_on_stream.read_records(sync_mode=SyncMode.full_refresh)
+        ]
 
     if not depend_on_stream_ids:
         return []
@@ -159,18 +175,31 @@ class SnapchatMarketingStream(HttpStream, ABC):
     def __init__(self, start_date, **kwargs):
         super().__init__(**kwargs)
         self.start_date = pendulum.parse(start_date).to_rfc3339_string()
+        # self.logger.warn(str(start_date))
+        # self.start_date = date.fromisoformat(start_date)
 
-    def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
+    def next_page_token(
+        self, response: requests.Response
+    ) -> Optional[Mapping[str, Any]]:
         next_page_cursor = response.json().get("paging", False)
         if next_page_cursor:
-            return {"cursor": dict(parse_qsl(urlparse(next_page_cursor["next_link"]).query))["cursor"]}
+            return {
+                "cursor": dict(
+                    parse_qsl(urlparse(next_page_cursor["next_link"]).query)
+                )["cursor"]
+            }
 
     def request_params(
-        self, stream_state: Mapping[str, Any], stream_slice: Mapping[str, any] = None, next_page_token: Mapping[str, Any] = None
+        self,
+        stream_state: Mapping[str, Any],
+        stream_slice: Mapping[str, any] = None,
+        next_page_token: Mapping[str, Any] = None,
     ) -> MutableMapping[str, Any]:
         return next_page_token or {}
 
-    def parse_response(self, response: requests.Response, **kwargs) -> Iterable[Mapping]:
+    def parse_response(
+        self, response: requests.Response, **kwargs
+    ) -> Iterable[Mapping]:
         """Response json came like
         {
             "organizations": [
@@ -188,10 +217,11 @@ class SnapchatMarketingStream(HttpStream, ABC):
         Also, the client side filtering for incremental sync is used
         """
         json_response = response.json().get(self.response_root_name)
+
         for resp in json_response:
             if self.response_item_name not in resp:
                 error_text = f"JSON field named '{self.response_item_name}' is absent in the response for {self.name} stream"
-                self.logger.error(error_text)
+                # self.logger.error(error_text)
                 raise SnapchatMarketingException(error_text)
             yield resp.get(self.response_item_name)
 
@@ -209,19 +239,32 @@ class IncrementalSnapchatMarketingStream(SnapchatMarketingStream, ABC):
 
     def stream_slices(self, **kwargs) -> Iterable[Optional[Mapping[str, Any]]]:
         stream_state = kwargs.get("stream_state")
-        self.initial_state = stream_state.get(self.cursor_field) if stream_state else self.start_date
+        self.initial_state = (
+            stream_state.get(self.cursor_field) if stream_state else self.start_date
+        )
         self.max_state = self.initial_state
-        depends_on_stream_config = {"authenticator": self.authenticator, "start_date": self.start_date}
-        stream_slices = get_depend_on_ids(self.depends_on_stream, depends_on_stream_config, self.slice_key_name)
+        depends_on_stream_config = {
+            "authenticator": self.authenticator,
+            "start_date": self.start_date,
+        }
+        stream_slices = get_depend_on_ids(
+            self.depends_on_stream, depends_on_stream_config, self.slice_key_name
+        )
 
         if not stream_slices:
-            self.logger.error(f"No {self.slice_key_name}s found. {self.name} cannot be extracted without {self.slice_key_name}.")
+            self.logger.error(
+                f"No {self.slice_key_name}s found. {self.name} cannot be extracted without {self.slice_key_name}."
+            )
             yield from []
 
         self.last_slice = stream_slices[-1]
         yield from stream_slices
 
-    def get_updated_state(self, current_stream_state: MutableMapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
+    def get_updated_state(
+        self,
+        current_stream_state: MutableMapping[str, Any],
+        latest_record: Mapping[str, Any],
+    ) -> Mapping[str, Any]:
         """
         I see you have a lot of questions to this function. I will try to explain.
         The problem that it solves is next: records from the streams that used nested ids logic (see the get_depend_on_ids function comments below)
@@ -254,10 +297,17 @@ class IncrementalSnapchatMarketingStream(SnapchatMarketingStream, ABC):
             return {self.cursor_field: self.initial_state}
         else:
             self.max_state = max(self.max_state, latest_record[self.cursor_field])
-            return {self.cursor_field: self.max_state if self.current_slice == self.last_slice else self.initial_state}
+            return {
+                self.cursor_field: self.max_state
+                if self.current_slice == self.last_slice
+                else self.initial_state
+            }
 
     def read_records(
-        self, stream_state: Mapping[str, Any] = None, stream_slice: Mapping[str, Any] = None, **kwargs
+        self,
+        stream_state: Mapping[str, Any] = None,
+        stream_slice: Mapping[str, Any] = None,
+        **kwargs,
     ) -> Iterable[Mapping[str, Any]]:
         """
         This structure is used to set the class variable current_slice to the current stream slice for the
@@ -266,7 +316,9 @@ class IncrementalSnapchatMarketingStream(SnapchatMarketingStream, ABC):
         This makes the incremental magic works
         """
         self.current_slice = stream_slice
-        records = super().read_records(stream_slice=stream_slice, stream_state=stream_state, **kwargs)
+        records = super().read_records(
+            stream_slice=stream_slice, stream_state=stream_state, **kwargs
+        )
         if stream_state:
             for record in records:
                 if record[self.cursor_field] > stream_state.get(self.cursor_field):
@@ -275,7 +327,9 @@ class IncrementalSnapchatMarketingStream(SnapchatMarketingStream, ABC):
             yield from records
 
     def path(self, stream_slice: Mapping[str, Any] = None, **kwargs) -> str:
-        return f"adaccounts/{stream_slice[self.slice_key_name]}/{self.response_root_name}"
+        return (
+            f"adaccounts/{stream_slice[self.slice_key_name]}/{self.response_root_name}"
+        )
 
 
 class Organizations(SnapchatMarketingStream):
@@ -329,6 +383,188 @@ class Adsquads(IncrementalSnapchatMarketingStream):
     depends_on_stream = Adaccounts
 
 
+class AdsquadsStats(IncrementalSnapchatMarketingStream):
+    """ Docs: https://marketingapi.snapchat.com/docs/#get-all-ad-squads-under-an-ad-account """
+
+    depends_on_stream = Adsquads
+    slice_key_name = "adsquad_id"
+
+    def path(self, stream_slice: Mapping[str, Any] = None, **kwargs) -> str:
+        return f"adsquads/{stream_slice[self.slice_key_name]}/stats"
+
+    def request_params(
+        self,
+        stream_state: Mapping[str, Any],
+        start_time,
+        end_time,
+        stream_slice: Mapping[str, any] = None,
+        next_page_token: Mapping[str, Any] = None,
+        timezone=None,
+    ) -> MutableMapping[str, Any]:
+
+        if timezone == "LA":
+            tz = pytz.timezone("America/Los_Angeles")
+            start_time = tz.localize(start_time)
+            end_time = tz.localize(end_time)
+            end_time = end_time.astimezone(pytz.timezone("UTC")).strftime(
+                "%Y-%m-%dT%H:00:00.000-00:00"
+            )
+            start_time = start_time.astimezone(pytz.timezone("UTC")).strftime(
+                "%Y-%m-%dT%H:00:00.000-00:00"
+            )
+
+            return {
+                "granularity": "DAY",
+                "start_time": start_time,
+                "end_time": end_time,
+                "fields": "impressions,swipes,screen_time_millis,quartile_1,quartile_2,quartile_3,view_completion,spend",
+            }
+        elif timezone == "Paris":
+            tz = pytz.timezone("Europe/Paris")
+            start_time = tz.localize(start_time)
+            end_time = tz.localize(end_time)
+            end_time = end_time.astimezone(pytz.timezone("UTC")).strftime(
+                "%Y-%m-%dT%H:00:00.000-00:00"
+            )
+            start_time = start_time.astimezone(pytz.timezone("UTC")).strftime(
+                "%Y-%m-%dT%H:00:00.000-00:00"
+            )
+
+            return {
+                "granularity": "DAY",
+                "start_time": start_time,
+                "end_time": end_time,
+                "fields": "impressions,swipes,screen_time_millis,quartile_1,quartile_2,quartile_3,view_completion,spend",
+            }
+
+        # return next_page_token or {}
+
+    def read_records(
+        self,
+        sync_mode: SyncMode,
+        cursor_field: List[str] = None,
+        stream_slice: Mapping[str, Any] = None,
+        stream_state: Mapping[str, Any] = None,
+    ) -> Iterable[Mapping[str, Any]]:
+
+        start_date_slice = datetime.fromisoformat(self.start_date[:10])
+        end_date_slice = start_date_slice + timedelta(days=30)
+
+        while end_date_slice.date() <= (date.today() + timedelta(days=30)):
+            stream_state = stream_state or {}
+            next_page_token = None
+            pagination_complete = False
+            while not pagination_complete:
+
+                request_headers = self.request_headers(
+                    stream_state=stream_state,
+                    stream_slice=stream_slice,
+                    next_page_token=next_page_token,
+                )
+                try:
+                    request = self._create_prepared_request(
+                        path=self.path(
+                            stream_state=stream_state,
+                            stream_slice=stream_slice,
+                            next_page_token=next_page_token,
+                        ),
+                        headers=dict(
+                            request_headers, **self.authenticator.get_auth_header()
+                        ),
+                        params=self.request_params(
+                            start_time=start_date_slice,
+                            end_time=end_date_slice,
+                            stream_state=stream_state,
+                            stream_slice=stream_slice,
+                            next_page_token=next_page_token,
+                            timezone="Paris",
+                        ),
+                        json=self.request_body_json(
+                            stream_state=stream_state,
+                            stream_slice=stream_slice,
+                            next_page_token=next_page_token,
+                        ),
+                        data=self.request_body_data(
+                            stream_state=stream_state,
+                            stream_slice=stream_slice,
+                            next_page_token=next_page_token,
+                        ),
+                    )
+                    request_kwargs = self.request_kwargs(
+                        stream_state=stream_state,
+                        stream_slice=stream_slice,
+                        next_page_token=next_page_token,
+                    )
+                    response = self._send_request(request, request_kwargs)
+                    yield from self.parse_response(
+                        response, stream_state=stream_state, stream_slice=stream_slice
+                    )
+                    next_page_token = self.next_page_token(response)
+                    if not next_page_token:
+                        pagination_complete = True
+                except:
+
+                    request = self._create_prepared_request(
+                        path=self.path(
+                            stream_state=stream_state,
+                            stream_slice=stream_slice,
+                            next_page_token=next_page_token,
+                        ),
+                        headers=dict(
+                            request_headers, **self.authenticator.get_auth_header()
+                        ),
+                        params=self.request_params(
+                            start_time=start_date_slice,
+                            end_time=end_date_slice,
+                            stream_state=stream_state,
+                            stream_slice=stream_slice,
+                            next_page_token=next_page_token,
+                            timezone="LA",
+                        ),
+                        json=self.request_body_json(
+                            stream_state=stream_state,
+                            stream_slice=stream_slice,
+                            next_page_token=next_page_token,
+                        ),
+                        data=self.request_body_data(
+                            stream_state=stream_state,
+                            stream_slice=stream_slice,
+                            next_page_token=next_page_token,
+                        ),
+                    )
+                    request_kwargs = self.request_kwargs(
+                        stream_state=stream_state,
+                        stream_slice=stream_slice,
+                        next_page_token=next_page_token,
+                    )
+
+                    response = self._send_request(request, request_kwargs)
+                    yield from self.parse_response(
+                        response,
+                        stream_state=stream_state,
+                        stream_slice=stream_slice,
+                    )
+                    next_page_token = self.next_page_token(response)
+                    if not next_page_token:
+                        pagination_complete = True
+
+            start_date_slice = end_date_slice
+            end_date_slice = end_date_slice + timedelta(days=30)
+
+    def parse_response(
+        self, response: requests.Response, **kwargs
+    ) -> Iterable[Mapping]:
+
+        json_response = response.json().get("timeseries_stats")
+        base_info = copy.deepcopy(json_response[0]["timeseries_stat"])
+        del base_info["timeseries"]
+
+        for ts in json_response[0]["timeseries_stat"]["timeseries"]:
+            rec = {**base_info, **ts}
+
+            yield rec
+
+
 class Segments(IncrementalSnapchatMarketingStream):
     """ Docs: https://marketingapi.snapchat.com/docs/#get-all-audience-segments """
 
@@ -355,7 +591,11 @@ class SnapchatAdsOauth2Authenticator(Oauth2Authenticator):
     def refresh_access_token(self) -> Tuple[str, int]:
         response_json = None
         try:
-            response = requests.request(method="POST", url=self.token_refresh_endpoint, data=self.get_refresh_request_body())
+            response = requests.request(
+                method="POST",
+                url=self.token_refresh_endpoint,
+                data=self.get_refresh_request_body(),
+            )
             response_json = response.json()
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
@@ -381,7 +621,9 @@ class SourceSnapchatMarketing(AbstractSource):
             token = auth.get_access_token()
             url = f"{SnapchatMarketingStream.url_base}me"
 
-            session = requests.get(url, headers={"Authorization": "Bearer {}".format(token)})
+            session = requests.get(
+                url, headers={"Authorization": "Bearer {}".format(token)}
+            )
             session.raise_for_status()
             return True, None
 
@@ -395,6 +637,7 @@ class SourceSnapchatMarketing(AbstractSource):
             Adaccounts(**kwargs),
             Ads(**kwargs),
             Adsquads(**kwargs),
+            AdsquadsStats(**kwargs),
             Campaigns(**kwargs),
             Creatives(**kwargs),
             Media(**kwargs),

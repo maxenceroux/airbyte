@@ -1,0 +1,47 @@
+{
+    "type": [
+        "null",
+        "object"
+    ],
+    "properties": {
+        "id": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "type": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "granularity": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "start_time": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "end_time": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "finalized_data_end_time": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "stats": {
+            "type": "object"
+        }
+    }
+}

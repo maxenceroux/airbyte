@@ -1,0 +1,403 @@
+{
+    "streams": [
+        {
+            "sync_mode": "full_refresh",
+            "destination_sync_mode": "overwrite",
+            "stream": {
+                "name": "organizations",
+                "supported_sync_modes": [
+                    "full_refresh"
+                ],
+                "source_defined_cursor": false,
+                "json_schema": {
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "updated_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "created_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "name": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "address_line_1": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "locality": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "administrative_district_level_1": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "country": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "postal_code": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "type": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "sync_mode": "full_refresh",
+            "destination_sync_mode": "overwrite",
+            "stream": {
+                "name": "campaigns",
+                "supported_sync_modes": [
+                    "full_refresh"
+                ],
+                "source_defined_cursor": false,
+                "json_schema": {
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "updated_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "created_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "name": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "ad_account_id": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "status": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "start_time": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "end_time": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "daily_budget_micro": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "sync_mode": "full_refresh",
+            "destination_sync_mode": "overwrite",
+            "stream": {
+                "name": "adaccounts",
+                "supported_sync_modes": [
+                    "full_refresh"
+                ],
+                "source_defined_cursor": false,
+                "json_schema": {
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "updated_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "created_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "name": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "type": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "status": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "organization_id": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "funding_source_ids": {
+                            "type": "array"
+                        },
+                        "currency": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "timezone": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "advertiser": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "sync_mode": "full_refresh",
+            "destination_sync_mode": "overwrite",
+            "stream": {
+                "name": "adsquads",
+                "supported_sync_modes": [
+                    "full_refresh"
+                ],
+                "source_defined_cursor": false,
+                "json_schema": {
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "updated_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "created_at": {
+                            "type": [
+                                "null",
+                                "string"
+                            ],
+                            "format": "date-time"
+                        },
+                        "name": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "status": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "campaign_id": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "type": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "targeting": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "billing_event": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "auto_bid": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "target_bid": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "bid_strategy": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "daily_budget_micro": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "start_time": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "optimization_goal": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "sync_mode": "full_refresh",
+            "destination_sync_mode": "overwrite",
+            "stream": {
+                "name": "adsquads_stats",
+                "supported_sync_modes": [
+                    "full_refresh"
+                ],
+                "source_defined_cursor": false,
+                "json_schema": {
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "type": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "granularity": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "start_time": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "end_time": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "finalized_data_end_time": {
+                            "type": [
+                                "null",
+                                "string"
+                            ]
+                        },
+                        "stats": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
