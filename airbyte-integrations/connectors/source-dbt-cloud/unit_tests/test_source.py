@@ -23,18 +23,20 @@
 #
 
 from source_dbt_cloud.source import SourceDbtCloud
-from unittest.mock import MagicMock
+from airbyte_cdk.logger import AirbyteLogger
+from airbyte_cdk.models import Status
 
 
-def test_check_connection(mocker):
+def test_check_connection():
     source = SourceDbtCloud()
-    logger_mock, config_mock = MagicMock(), MagicMock()
-    assert source.check_connection(logger_mock, config_mock) == (True, None)
+    result = source.check(logger=AirbyteLogger, config={"api_key": "wrong_api_key"})
+    assert result.status == Status.FAILED
 
-def test_streams(mocker):
-    source = SourceDbtCloud()
-    config_mock = MagicMock()
-    streams = source.streams(config_mock)
-    # TODO: replace this with your streams number
-    expected_streams_number = 2
-    assert len(streams) == expected_streams_number
+
+# def test_streams(mocker):
+#     source = SourceDbtCloud()
+#     config_mock = MagicMock()
+#     streams = source.streams(config_mock)
+#     # TODO: replace this with your streams number
+#     expected_streams_number = 2
+#     assert len(streams) == expected_streams_number

@@ -34,22 +34,7 @@ from airbyte_cdk.sources.streams import Stream
 from airbyte_cdk.sources.streams.http import HttpStream
 from airbyte_cdk.sources.streams.http.auth import TokenAuthenticator
 
-"""
-TODO: Most comments in this class are instructive and should be deleted after the source is implemented.
 
-This file provides a stubbed example of how to use the Airbyte CDK to develop both a source connector which supports full refresh or and an
-incremental syncs from an HTTP API.
-
-The various TODOs are both implementation hints and steps - fulfilling all the TODOs should be sufficient to implement one basic and one incremental
-stream from a source. This pattern is the same one used by Airbyte internally to implement connectors.
-
-The approach here is not authoritative, and devs are free to use their own judgement.
-
-There are additional required TODOs in the files within the integration_tests folder and the spec.json file.
-"""
-
-
-# Basic full refresh stream
 class DbtCloudStream(HttpStream, ABC):
     """
     This class represents a stream output by the connector.
@@ -136,15 +121,12 @@ class DbtCloudStream(HttpStream, ABC):
                 stream_batch_count = next_page_token
             else:
                 pagination_complete = True
-
-        # Always return an empty generator just in case no records were ever yielded
         yield from []
 
     def parse_response(
         self, response: requests.Response, **kwargs
     ) -> Iterable[Mapping]:
         """
-        TODO: Override this method to define how a response is parsed.
         :return an iterable containing each record in the response
         """
         for rec in response.json().get("data"):
@@ -156,7 +138,6 @@ class Accounts(DbtCloudStream):
     Accounts LIST endpoint on dbt Cloud V2 API
     """
 
-    # TODO: Fill in the primary key. Required. This is usually a unique field in the stream, like an ID or a timestamp.
     primary_key = "id"
 
     def path(
@@ -170,10 +151,9 @@ class Accounts(DbtCloudStream):
 
 class DbtCloudDependentStream(DbtCloudStream):
     """
-    We need to get all most dbt endpoints, ids of parent items in order to create URL.
+    Most dbt Cloud API's endpoint should pass to their URL an account ID, e.g. https://cloud.getdbt.com/api/v2/accounts/{accountId}/jobs/.
+    For these streams, path method will yield all paths for the passed API key, 1 path per account.
     """
-
-    # TODO: Fill in the primary key. Required. This is usually a unique field in the stream, like an ID or a timestamp.
 
     def read_records(
         self,
@@ -265,8 +245,6 @@ class Jobs(DbtCloudDependentStream):
     Jobs LIST endpoint on dbt Cloud V2 API
     """
 
-    # TODO: Fill in the primary key. Required. This is usually a unique field in the stream, like an ID or a timestamp.
-
     primary_key = "id"
 
     def path(
@@ -287,8 +265,6 @@ class Runs(DbtCloudDependentStream):
     """
     Runs LIST endpoint on dbt Cloud V2 API
     """
-
-    # TODO: Fill in the primary key. Required. This is usually a unique field in the stream, like an ID or a timestamp.
 
     primary_key = "id"
 
@@ -319,48 +295,10 @@ class Runs(DbtCloudDependentStream):
         }
 
 
-# Basic incremental stream
-class IncrementalDbtCloudStream(DbtCloudStream, ABC):
-    """
-    TODO fill in details of this class to implement functionality related to incremental syncs for your connector.
-         if you do not need to implement incremental sync for any streams, remove this class.
-    """
-
-    # TODO: Fill in to checkpoint stream reads after N records. This prevents re-reading of data if the stream fails for any reason.
-    state_checkpoint_interval = None
-
-    @property
-    def cursor_field(self) -> str:
-        """
-        TODO
-        Override to return the cursor field used by this stream e.g: an API entity might always use created_at as the cursor field. This is
-        usually id or date based. This field's presence tells the framework this in an incremental stream. Required for incremental.
-
-        :return str: The name of the cursor field.
-        """
-        return []
-
-    def get_updated_state(
-        self,
-        current_stream_state: MutableMapping[str, Any],
-        latest_record: Mapping[str, Any],
-    ) -> Mapping[str, Any]:
-        """
-        Override to determine the latest state after reading the latest record. This typically compared the cursor_field from the latest record and
-        the current state and picks the 'most' recent cursor. This is how a stream's state is determined. Required for incremental.
-        """
-        return {}
-
-
-# Source
 class SourceDbtCloud(AbstractSource):
     def check_connection(self, logger, config) -> Tuple[bool, any]:
         """
-        TODO: Implement a connection check to validate that the user-provided config can be used to connect to the underlying API
-
-        See https://github.com/airbytehq/airbyte/blob/master/airbyte-integrations/connectors/source-stripe/source_stripe/source.py#L232
-        for an example.
-
+        Check if connection is successful and if API key passed is a valid API key
         :param config:  the user-input config object conforming to the connector's spec.json
         :param logger:  logger object
         :return Tuple[bool, any]: (True, None) if the input config can be used to connect to the API successfully, (False, error) otherwise.
@@ -380,14 +318,9 @@ class SourceDbtCloud(AbstractSource):
 
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
         """
-        TODO: Replace the streams below with your own streams.
-
         :param config: A Mapping of the user input configuration as defined in the connector spec.
         """
-        # TODO remove the authenticator if not required.
-        auth = TokenAuthenticator(
-            token=config["api_key"]
-        )  # Oauth2Authenticator is also available if you need oauth support
+        auth = TokenAuthenticator(token=config["api_key"])
         return [
             Accounts(authenticator=auth),
             Projects(authenticator=auth),
