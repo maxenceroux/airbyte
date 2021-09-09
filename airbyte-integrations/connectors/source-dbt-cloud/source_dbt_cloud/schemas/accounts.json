@@ -1,0 +1,273 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "docs_job_id": {
+      "type": "integer"
+    },
+    "freshness_job_id": {
+      "type": "null"
+    },
+    "lock_reason": {
+      "type": "null"
+    },
+    "unlock_if_subscription_renewed": {
+      "type": "boolean"
+    },
+    "read_only_seats": {
+      "type": "integer"
+    },
+    "id": {
+      "type": "integer"
+    },
+    "name": {
+      "type": "string"
+    },
+    "state": {
+      "type": "integer"
+    },
+    "plan": {
+      "type": "string"
+    },
+    "pending_cancel": {
+      "type": "boolean"
+    },
+    "run_slots": {
+      "type": "integer"
+    },
+    "developer_seats": {
+      "type": "integer"
+    },
+    "queue_limit": {
+      "type": "integer"
+    },
+    "pod_memory_request_mebibytes": {
+      "type": "integer"
+    },
+    "run_duration_limit_seconds": {
+      "type": "integer"
+    },
+    "enterprise_authentication_method": {
+      "type": "null"
+    },
+    "enterprise_login_slug": {
+      "type": "null"
+    },
+    "enterprise_unique_identifier": {
+      "type": "null"
+    },
+    "billing_email_address": {
+      "type": "string"
+    },
+    "locked": {
+      "type": "boolean"
+    },
+    "develop_file_system": {
+      "type": "boolean"
+    },
+    "unlocked_at": {
+      "type": "null"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string"
+    },
+    "starter_repo_url": {
+      "type": "null"
+    },
+    "sso_reauth": {
+      "type": "boolean"
+    },
+    "git_auth_level": {
+      "type": "string"
+    },
+    "docs_job": {
+      "type": "object",
+      "properties": {
+        "execution": {
+          "type": "object",
+          "properties": {
+            "timeout_seconds": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "timeout_seconds"
+          ]
+        },
+        "generate_docs": {
+          "type": "boolean"
+        },
+        "run_generate_sources": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "account_id": {
+          "type": "integer"
+        },
+        "project_id": {
+          "type": "integer"
+        },
+        "environment_id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "dbt_version": {
+          "type": "null"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "execute_steps": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "state": {
+          "type": "integer"
+        },
+        "deferring_job_definition_id": {
+          "type": "null"
+        },
+        "lifecycle_webhooks": {
+          "type": "boolean"
+        },
+        "lifecycle_webhooks_url": {
+          "type": "null"
+        },
+        "triggers": {
+          "type": "object",
+          "properties": {
+            "github_webhook": {
+              "type": "boolean"
+            },
+            "git_provider_webhook": {
+              "type": "boolean"
+            },
+            "custom_branch_only": {
+              "type": "boolean"
+            },
+            "schedule": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "github_webhook",
+            "git_provider_webhook",
+            "custom_branch_only",
+            "schedule"
+          ]
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "threads": {
+              "type": "integer"
+            },
+            "target_name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "threads",
+            "target_name"
+          ]
+        },
+        "schedule": {
+          "type": "object",
+          "properties": {
+            "cron": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string"
+            },
+            "time": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "cron",
+            "date",
+            "time"
+          ]
+        },
+        "is_deferrable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "execution",
+        "generate_docs",
+        "run_generate_sources",
+        "id",
+        "account_id",
+        "project_id",
+        "environment_id",
+        "name",
+        "dbt_version",
+        "created_at",
+        "updated_at",
+        "execute_steps",
+        "state",
+        "deferring_job_definition_id",
+        "lifecycle_webhooks",
+        "lifecycle_webhooks_url",
+        "triggers",
+        "settings",
+        "schedule",
+        "is_deferrable"
+      ]
+    },
+    "freshness_job": {
+      "type": "null"
+    },
+    "enterprise_login_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "docs_job_id",
+    "freshness_job_id",
+    "lock_reason",
+    "unlock_if_subscription_renewed",
+    "read_only_seats",
+    "id",
+    "name",
+    "state",
+    "plan",
+    "pending_cancel",
+    "run_slots",
+    "developer_seats",
+    "queue_limit",
+    "pod_memory_request_mebibytes",
+    "run_duration_limit_seconds",
+    "enterprise_authentication_method",
+    "enterprise_login_slug",
+    "enterprise_unique_identifier",
+    "billing_email_address",
+    "locked",
+    "develop_file_system",
+    "unlocked_at",
+    "created_at",
+    "updated_at",
+    "starter_repo_url",
+    "sso_reauth",
+    "git_auth_level",
+    "docs_job",
+    "freshness_job",
+    "enterprise_login_url"
+  ]
+}

@@ -1,0 +1,426 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "account_id": {
+      "type": "integer"
+    },
+    "repository_id": {
+      "type": "integer"
+    },
+    "connection_id": {
+      "type": "integer"
+    },
+    "id": {
+      "type": "integer"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string"
+    },
+    "skipped_setup": {
+      "type": "boolean"
+    },
+    "state": {
+      "type": "integer"
+    },
+    "dbt_project_subdirectory": {
+      "type": "null"
+    },
+    "connection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "account_id": {
+          "type": "integer"
+        },
+        "project_id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "created_by_id": {
+          "type": "integer"
+        },
+        "created_by_service_token_id": {
+          "type": "null"
+        },
+        "details": {
+          "type": "object",
+          "properties": {
+            "project_id": {
+              "type": "string"
+            },
+            "timeout_seconds": {
+              "type": "integer"
+            },
+            "private_key_id": {
+              "type": "string"
+            },
+            "client_email": {
+              "type": "string"
+            },
+            "client_id": {
+              "type": "string"
+            },
+            "auth_uri": {
+              "type": "string"
+            },
+            "token_uri": {
+              "type": "string"
+            },
+            "auth_provider_x509_cert_url": {
+              "type": "string"
+            },
+            "client_x509_cert_url": {
+              "type": "string"
+            },
+            "retries": {
+              "type": "integer"
+            },
+            "location": {
+              "type": "string"
+            },
+            "is_configured_for_oauth": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "project_id",
+            "timeout_seconds",
+            "private_key_id",
+            "client_email",
+            "client_id",
+            "auth_uri",
+            "token_uri",
+            "auth_provider_x509_cert_url",
+            "client_x509_cert_url",
+            "retries",
+            "location",
+            "is_configured_for_oauth"
+          ]
+        },
+        "state": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "account_id",
+        "project_id",
+        "name",
+        "type",
+        "created_by_id",
+        "created_by_service_token_id",
+        "details",
+        "state",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "repository": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "account_id": {
+          "type": "integer"
+        },
+        "project_id": {
+          "type": "integer"
+        },
+        "full_name": {
+          "type": "string"
+        },
+        "remote_url": {
+          "type": "string"
+        },
+        "remote_backend": {
+          "type": "string"
+        },
+        "git_clone_strategy": {
+          "type": "string"
+        },
+        "deploy_key_id": {
+          "type": "integer"
+        },
+        "repository_credentials_id": {
+          "type": "null"
+        },
+        "github_installation_id": {
+          "type": "integer"
+        },
+        "pull_request_url_template": {
+          "type": "string"
+        },
+        "state": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "deploy_key": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "account_id": {
+              "type": "integer"
+            },
+            "state": {
+              "type": "integer"
+            },
+            "public_key": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "account_id",
+            "state",
+            "public_key"
+          ]
+        },
+        "github_repo": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "git_provider_id": {
+          "type": "null"
+        },
+        "gitlab": {
+          "type": "null"
+        },
+        "git_provider": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "id",
+        "account_id",
+        "project_id",
+        "full_name",
+        "remote_url",
+        "remote_backend",
+        "git_clone_strategy",
+        "deploy_key_id",
+        "repository_credentials_id",
+        "github_installation_id",
+        "pull_request_url_template",
+        "state",
+        "created_at",
+        "updated_at",
+        "deploy_key",
+        "github_repo",
+        "name",
+        "git_provider_id",
+        "gitlab",
+        "git_provider"
+      ]
+    },
+    "group_permissions": {
+      "type": "array",
+      "items": {}
+    },
+    "docs_job_id": {
+      "type": "integer"
+    },
+    "freshness_job_id": {
+      "type": "null"
+    },
+    "docs_job": {
+      "type": "object",
+      "properties": {
+        "environment_id": {
+          "type": "integer"
+        },
+        "account_id": {
+          "type": "integer"
+        },
+        "project_id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "generate_docs": {
+          "type": "boolean"
+        },
+        "run_generate_sources": {
+          "type": "boolean"
+        },
+        "state": {
+          "type": "integer"
+        },
+        "dbt_version": {
+          "type": "null"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "triggers": {
+          "type": "object",
+          "properties": {
+            "github_webhook": {
+              "type": "boolean"
+            },
+            "schedule": {
+              "type": "boolean"
+            },
+            "git_provider_webhook": {
+              "type": "boolean"
+            },
+            "custom_branch_only": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "github_webhook",
+            "schedule",
+            "git_provider_webhook",
+            "custom_branch_only"
+          ]
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "threads": {
+              "type": "integer"
+            },
+            "target_name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "threads",
+            "target_name"
+          ]
+        },
+        "execution": {
+          "type": "object",
+          "properties": {
+            "timeout_seconds": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "timeout_seconds"
+          ]
+        },
+        "schedule": {
+          "type": "object",
+          "properties": {
+            "cron": {
+              "type": "string"
+            },
+            "date": {
+              "type": "string"
+            },
+            "time": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "cron",
+            "date",
+            "time"
+          ]
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        },
+        "execute_steps": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "environment": {
+          "type": "null"
+        },
+        "most_recent_run": {
+          "type": "null"
+        },
+        "most_recent_completed_run": {
+          "type": "null"
+        },
+        "custom_environment_variables": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "environment_id",
+        "account_id",
+        "project_id",
+        "name",
+        "generate_docs",
+        "run_generate_sources",
+        "state",
+        "dbt_version",
+        "id",
+        "triggers",
+        "settings",
+        "execution",
+        "schedule",
+        "created_at",
+        "updated_at",
+        "execute_steps",
+        "environment",
+        "most_recent_run",
+        "most_recent_completed_run",
+        "custom_environment_variables"
+      ]
+    },
+    "freshness_job": {
+      "type": "null"
+    }
+  },
+  "required": [
+    "name",
+    "account_id",
+    "repository_id",
+    "connection_id",
+    "id",
+    "created_at",
+    "updated_at",
+    "skipped_setup",
+    "state",
+    "dbt_project_subdirectory",
+    "connection",
+    "repository",
+    "group_permissions",
+    "docs_job_id",
+    "freshness_job_id",
+    "docs_job",
+    "freshness_job"
+  ]
+}

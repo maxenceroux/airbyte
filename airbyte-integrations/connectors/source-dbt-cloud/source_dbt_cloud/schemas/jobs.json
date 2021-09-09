@@ -1,0 +1,188 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "execution": {
+            "type": "object",
+            "properties": {
+                "timeout_seconds": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "timeout_seconds"
+            ]
+        },
+        "generate_docs": {
+            "type": "boolean"
+        },
+        "run_generate_sources": {
+            "type": "boolean"
+        },
+        "id": {
+            "type": "integer"
+        },
+        "account_id": {
+            "type": "integer"
+        },
+        "project_id": {
+            "type": "integer"
+        },
+        "environment_id": {
+            "type": "integer"
+        },
+        "name": {
+            "type": "string"
+        },
+        "dbt_version": {
+            "type": "null"
+        },
+        "created_at": {
+            "type": "string"
+        },
+        "updated_at": {
+            "type": "string"
+        },
+        "execute_steps": {
+            "type": "array",
+            "items": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "string"
+                }
+            ]
+        },
+        "state": {
+            "type": "integer"
+        },
+        "deferring_job_definition_id": {
+            "type": "null"
+        },
+        "lifecycle_webhooks": {
+            "type": "boolean"
+        },
+        "lifecycle_webhooks_url": {
+            "type": "null"
+        },
+        "triggers": {
+            "type": "object",
+            "properties": {
+                "github_webhook": {
+                    "type": "boolean"
+                },
+                "git_provider_webhook": {
+                    "type": "boolean"
+                },
+                "custom_branch_only": {
+                    "type": "boolean"
+                },
+                "schedule": {
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "github_webhook",
+                "git_provider_webhook",
+                "custom_branch_only",
+                "schedule"
+            ]
+        },
+        "settings": {
+            "type": "object",
+            "properties": {
+                "threads": {
+                    "type": "integer"
+                },
+                "target_name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "threads",
+                "target_name"
+            ]
+        },
+        "schedule": {
+            "type": "object",
+            "properties": {
+                "cron": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "type"
+                    ]
+                },
+                "time": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string"
+                        },
+                        "interval": {
+                            "type": "integer"
+                        }
+                    },
+                    "required": [
+                        "type",
+                        "interval"
+                    ]
+                }
+            },
+            "required": [
+                "cron",
+                "date",
+                "time"
+            ]
+        },
+        "is_deferrable": {
+            "type": "boolean"
+        },
+        "generate_sources": {
+            "type": "boolean"
+        },
+        "cron_humanized": {
+            "type": "string"
+        },
+        "next_run": {
+            "type": "null"
+        },
+        "next_run_humanized": {
+            "type": "null"
+        }
+    },
+    "required": [
+        "execution",
+        "generate_docs",
+        "run_generate_sources",
+        "id",
+        "account_id",
+        "project_id",
+        "environment_id",
+        "name",
+        "dbt_version",
+        "created_at",
+        "updated_at",
+        "execute_steps",
+        "state",
+        "deferring_job_definition_id",
+        "lifecycle_webhooks",
+        "lifecycle_webhooks_url",
+        "triggers",
+        "settings",
+        "schedule",
+        "is_deferrable",
+        "generate_sources",
+        "cron_humanized",
+        "next_run",
+        "next_run_humanized"
+    ]
+}
